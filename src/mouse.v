@@ -1,4 +1,4 @@
-module main
+module mouse
 
 #flag -I @VMODROOT/src/c
 #flag linux -lX11
@@ -16,13 +16,22 @@ $if linux {
 
 // See .c files for comments.
 struct C.Position {
+__global:
 	x int
 	y int
 }
 pub type Position = C.Position
 
+struct C.Size {
+__global:
+	width int
+	height int
+}
+pub type Size = C.Size
+
 fn C.get_mouse_pos() C.Position
 fn C.set_mouse_pos(int, int)
+fn C.screen_size() C.Size
 
 [inline]
 pub fn get_pos() (int, int) {
@@ -44,6 +53,7 @@ pub fn set_pos(x int, y int) {
 	C.set_mouse_pos(x, y)
 }
 
-fn main() {
-	println(get_pos())
+[inline]
+pub fn screen_size() Size {
+	return C.screen_size()
 }

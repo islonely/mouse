@@ -3,3 +3,8 @@
 struct Position {
 	int x, y;
 };
+
+// Size is the width and height of something.
+struct Size {
+	int width, height;
+};
