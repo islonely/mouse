@@ -5,9 +5,8 @@ struct Position get_mouse_pos() {
 	struct Position pos = {-1, -1};
 	Display *dpy = XOpenDisplay(0);
 	Window root_window = XRootWindow(dpy, 0);
-	int root_id = 0,
-		child_id = 0,
-		win_x = 0,
+	Window root_id = 0, child_id = 0;
+	int win_x = 0,
 		win_y = 0,
 		mask = 0;
 	XQueryPointer(dpy, root_window, &root_id, &child_id, &pos.x, &pos.y, &win_x, &win_y, &mask);
