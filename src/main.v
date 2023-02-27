@@ -4,6 +4,7 @@ module main
 #flag linux -lX11
 #flag linux @VMODROOT/src/c/mouse_linux.o
 #flag windows @VMODROOT/src/c/mouse_windows.o
+#flag macos @VMODROOT/src/c/mouse_macos.o
 
 $if linux {
 	#include "mouse_linux.h"
@@ -18,19 +19,20 @@ struct C.Position {
 	x int
 	y int
 }
+pub type Position = C.Position
 
 fn C.get_mouse_pos() C.Position
 fn C.set_mouse_pos(int, int)
 
 [inline]
-pub fn get() (int, int) {
+pub fn get_pos() (int, int) {
 	pos := C.get_mouse_pos()
 	return pos.x, pos.y
 }
 
 [inline]
-pub fn get_opt() ?(int, int) {
-	x, y := get()
+pub fn get_pos_opt() ?(int, int) {
+	x, y := get_pos()
 	if -1 in [x, y] {
 		return none
 	}
@@ -38,10 +40,10 @@ pub fn get_opt() ?(int, int) {
 }
 
 [inline]
-pub fn set(x int, y int) {
+pub fn set_pos(x int, y int) {
 	C.set_mouse_pos(x, y)
 }
 
 fn main() {
-	println(get())
+	println(get_pos())
 }
