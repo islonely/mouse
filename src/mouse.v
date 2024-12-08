@@ -2,6 +2,7 @@ module mouse
 
 #flag -I @VMODROOT/src/c
 #flag linux -lX11
+#flag macos -framework ApplicationServices
 #flag linux @VMODROOT/src/c/mouse_linux.o
 #flag windows @VMODROOT/src/c/mouse_windows.o
 #flag macos @VMODROOT/src/c/mouse_macos.o
@@ -11,6 +12,7 @@ $if linux {
 } $else $if windows {
 	#include "mouse_windows.h"
 } $else $if macos {
+	#include "mouse_macos.h"
 }
 
 // See .c files for comments.
