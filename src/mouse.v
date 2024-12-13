@@ -18,7 +18,7 @@ $if linux {
 // See .c files for comments.
 struct C.Position {
 __global:
-	x int
+	x int 
 	y int
 }
 
@@ -36,12 +36,15 @@ fn C.get_mouse_pos() C.Position
 fn C.set_mouse_pos(int, int)
 fn C.screen_size() C.Size
 
+// get_pos returns the global X and Y coordinates of the mouse cursor.
+// Returns -1, -1 if there is an error getting the mosue position.
 @[inline]
 pub fn get_pos() (int, int) {
 	pos := C.get_mouse_pos()
 	return pos.x, pos.y
 }
 
+// get_pos_opt returns the global X and Y coordinates of the mouse cursor.
 @[inline]
 pub fn get_pos_opt() ?(int, int) {
 	x, y := get_pos()
@@ -51,11 +54,13 @@ pub fn get_pos_opt() ?(int, int) {
 	return x, y
 }
 
+// set_pos moves the mouse cursor to the given location.
 @[inline]
 pub fn set_pos(x int, y int) {
 	C.set_mouse_pos(x, y)
 }
 
+// screen_size returns the size of the primary display.
 @[inline]
 pub fn screen_size() Size {
 	return C.screen_size()
