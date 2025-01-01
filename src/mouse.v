@@ -18,6 +18,36 @@ $if linux {
 	#include <ApplicationServices/ApplicationServices.h>
 }
 
+// the compositor used by the user.
+const compositor = get_compositor()
+
+// Compositor is the window compositor being used by the system.
+enum Compositor {
+	unknown
+	wayland
+	x11
+	quartz
+	windows
+}
+
+// get_compositor gets whether or not a user has X11 or Wayland as
+// their window compositor.
+fn get_compositor() Compositor {
+	$if macos {
+		return .quartz
+	}
+	$if windows {
+		return .windows
+	}
+	_ := os.getenv_opt('WAYLAND_DISPLAY') or {
+		_ := os.getenv_opt('DISPLAY') or {
+			return .unknown
+		}
+		return .x11
+	}
+	return .wayland
+}
+
 // macos structs and fns
 struct C.CGPoint {
 __global:
