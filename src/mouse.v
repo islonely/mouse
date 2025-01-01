@@ -1,5 +1,7 @@
 module mouse
 
+import os { user_os }
+
 #flag -I @VMODROOT/src/c
 #flag linux -lX11
 #flag macos -framework ApplicationServices
@@ -13,6 +15,47 @@ $if linux {
 	#include "mouse_windows.h"
 } $else $if macos {
 	#include "mouse_macos.h"
+	#include <ApplicationServices/ApplicationServices.h>
+}
+
+// macos structs and fns
+struct C.CGPoint {
+__global:
+	x f64
+	y f64
+}
+fn C.CGEventCreateMouseEvent(voidptr, int, C.CGPoint, int) voidptr
+fn C.CFRelease(voidptr)
+fn C.CGEventPost(int, voidptr)
+
+// Button is which mouse button to be pressed.
+pub enum Button {
+	left
+	right
+	middle
+}
+
+// EventType is an event used by C.CGEventCreateMouseEvent.
+enum EventType {
+	tap_disabled_by_timeout = -2
+	tap_disabled_by_user_input = -1
+	null
+	left_mouse_down
+	left_mouse_up
+	right_mouse_down
+	right_mouse_up
+	mouse_moved
+	left_mouse_dragged
+	right_mouse_dragged
+	key_down = 10
+	key_up
+	flags_changed
+	scroll_wheel = 22
+	tablet_pointer
+	tablet_proximity
+	other_mouse_down
+	other_mouse_up
+	other_mouse_dragged
 }
 
 // See .c files for comments.
@@ -31,6 +74,11 @@ __global:
 }
 
 pub type Size = C.Size
+
+pub struct Rectangle {
+	Size
+	Position
+}
 
 fn C.get_mouse_pos() C.Position
 fn C.set_mouse_pos(int, int)
@@ -64,4 +112,29 @@ pub fn set_pos(x int, y int) {
 @[inline]
 pub fn screen_size() Size {
 	return C.screen_size()
+}
+
+// click simulates a left mouse click.
+pub fn click() {
+	$if macos {
+		mouse_x, mouse_y := get_pos()
+		point := C.CGPoint{mouse_x, mouse_y}
+		mut mouse_down_evt := C.CGEventCreateMouseEvent(0, int(EventType.left_mouse_down), point, int(Button.left))
+		mut mouse_up_evt := C.CGEventCreateMouseEvent(0, int(EventType.left_mouse_up), point, int(Button.left))
+		C.CGEventPost(0, mouse_down_evt)
+		C.CGEventPost(0, mouse_up_evt)
+		C.CFRelease(mouse_down_evt)
+		C.CFRelease(mouse_up_evt)
+		return
+	}
+	$if debug {
+		println('fn ${@MOD}.${@FN} is not supported on ${user_os()}.')
+	}
+}
+
+// double_click simulates a mouse left clicking twice in a row.
+@[inline]
+pub fn double_click() {
+	click()
+	click()
 }
