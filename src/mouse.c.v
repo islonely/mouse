@@ -3,18 +3,17 @@ module mouse
 import os { user_os }
 
 #flag -I @VMODROOT/src/c
+#include "mouse.h"
 #flag linux -lX11
-#flag macos -framework ApplicationServices
 #flag linux @VMODROOT/src/c/mouse_linux.o
 #flag windows @VMODROOT/src/c/mouse_windows.o
-#flag macos @VMODROOT/src/c/mouse_macos.o
 
 $if linux {
 	#include "mouse_linux.h"
 } $else $if windows {
 	#include "mouse_windows.h"
 } $else $if macos {
-	#include "mouse_macos.h"
+	#flag -framework ApplicationServices
 	#include <ApplicationServices/ApplicationServices.h>
 }
 
@@ -48,12 +47,33 @@ fn get_compositor() Compositor {
 	return .wayland
 }
 
-// macos structs and fns
+// MacOS declarations
+@[typedef]
 struct C.CGPoint {
 __global:
 	x f64
 	y f64
 }
+
+@[typedef]
+struct C.CGSize {
+__global:
+	width f64
+	height f64
+}
+
+@[typedef]
+struct C.CGRect {
+__global:
+	origin C.CGPoint
+	size C.CGSize
+}
+
+fn C.CGDisplayBounds(u32) C.CGRect
+fn C.CGMainDisplayID() u32
+fn C.CGWarpMouseCursorPosition(C.CGPoint)
+fn C.CGEventCreate(voidptr) voidptr
+fn C.CGEventGetLocation(voidptr) C.CGPoint
 fn C.CGEventCreateMouseEvent(voidptr, int, C.CGPoint, int) voidptr
 fn C.CFRelease(voidptr)
 fn C.CGEventPost(int, voidptr)
@@ -116,10 +136,16 @@ fn C.screen_size() C.Size
 
 // get_pos returns the global X and Y coordinates of the mouse cursor.
 // Returns -1, -1 if there is an error getting the mosue position.
-@[inline]
 pub fn get_pos() (int, int) {
-	pos := C.get_mouse_pos()
-	return pos.x, pos.y
+	$if macos {
+		event := C.CGEventCreate(unsafe { nil })
+		point := C.CGEventGetLocation(event)
+		C.CFRelease(event)
+		return int(point.x), int(point.y)
+	} $else {
+		pos := C.get_mouse_pos()
+		return pos.x, pos.y
+	}
 }
 
 // get_pos_opt returns the global X and Y coordinates of the mouse cursor.
@@ -133,15 +159,26 @@ pub fn get_pos_opt() ?(int, int) {
 }
 
 // set_pos moves the mouse cursor to the given location.
-@[inline]
 pub fn set_pos(x int, y int) {
-	C.set_mouse_pos(x, y)
+	$if macos {
+		C.CGWarpMouseCursorPosition(C.CGPoint{x, y})
+		return
+	} $else {
+		C.set_mouse_pos(x, y)
+	}
 }
 
 // screen_size returns the size of the primary display.
-@[inline]
 pub fn screen_size() Size {
-	return C.screen_size()
+	$if macos {
+		primary_screen := C.CGDisplayBounds(C.CGMainDisplayID())
+		return Size{
+			width: int(primary_screen.size.width)
+			height: int(primary_screen.size.height)
+		}
+	} $else {
+		return C.screen_size()
+	}
 }
 
 // click simulates a left mouse click.
