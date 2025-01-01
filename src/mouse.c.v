@@ -1,6 +1,7 @@
 module mouse
 
 import os { user_os }
+import time
 
 #flag -I @VMODROOT/src/c
 #include "mouse.h"
@@ -17,68 +18,7 @@ $if linux {
 	#include <ApplicationServices/ApplicationServices.h>
 }
 
-// the compositor used by the user.
-const compositor = get_compositor()
-
-// Compositor is the window compositor being used by the system.
-enum Compositor {
-	unknown
-	wayland
-	x11
-	quartz
-	windows
-}
-
-// get_compositor gets whether or not a user has X11 or Wayland as
-// their window compositor.
-fn get_compositor() Compositor {
-	$if macos {
-		return .quartz
-	}
-	$if windows {
-		return .windows
-	}
-	_ := os.getenv_opt('WAYLAND_DISPLAY') or {
-		_ := os.getenv_opt('DISPLAY') or {
-			return .unknown
-		}
-		return .x11
-	}
-	return .wayland
-}
-
-// MacOS declarations
-@[typedef]
-struct C.CGPoint {
-__global:
-	x f64
-	y f64
-}
-
-@[typedef]
-struct C.CGSize {
-__global:
-	width f64
-	height f64
-}
-
-@[typedef]
-struct C.CGRect {
-__global:
-	origin C.CGPoint
-	size C.CGSize
-}
-
-fn C.CGDisplayBounds(u32) C.CGRect
-fn C.CGMainDisplayID() u32
-fn C.CGWarpMouseCursorPosition(C.CGPoint)
-fn C.CGEventCreate(voidptr) voidptr
-fn C.CGEventGetLocation(voidptr) C.CGPoint
-fn C.CGEventCreateMouseEvent(voidptr, int, C.CGPoint, int) voidptr
-fn C.CFRelease(voidptr)
-fn C.CGEventPost(int, voidptr)
-
-// Button is which mouse button to be pressed.
+// Button is the buttons on a mouse or touchpad.
 pub enum Button {
 	left
 	right
@@ -87,7 +27,7 @@ pub enum Button {
 
 // EventType is an event used by C.CGEventCreateMouseEvent.
 enum EventType {
-	tap_disabled_by_timeout = -2
+	tap_disabled_by_timeout    = -2
 	tap_disabled_by_user_input = -1
 	null
 	left_mouse_down
@@ -97,10 +37,10 @@ enum EventType {
 	mouse_moved
 	left_mouse_dragged
 	right_mouse_dragged
-	key_down = 10
+	key_down                   = 10
 	key_up
 	flags_changed
-	scroll_wheel = 22
+	scroll_wheel               = 22
 	tablet_pointer
 	tablet_proximity
 	other_mouse_down
@@ -111,7 +51,7 @@ enum EventType {
 // See .c files for comments.
 struct C.Position {
 __global:
-	x int 
+	x int
 	y int
 }
 
@@ -158,7 +98,7 @@ pub fn get_pos_opt() ?(int, int) {
 	return x, y
 }
 
-// set_pos moves the mouse cursor to the given location.
+// `fn set_pos` immediately moves the mouse cursor to the `x`, `y`.
 pub fn set_pos(x int, y int) {
 	$if macos {
 		C.CGWarpMouseCursorPosition(C.CGPoint{x, y})
@@ -168,26 +108,15 @@ pub fn set_pos(x int, y int) {
 	}
 }
 
-// screen_size returns the size of the primary display.
-pub fn screen_size() Size {
-	$if macos {
-		primary_screen := C.CGDisplayBounds(C.CGMainDisplayID())
-		return Size{
-			width: int(primary_screen.size.width)
-			height: int(primary_screen.size.height)
-		}
-	} $else {
-		return C.screen_size()
-	}
-}
-
-// click simulates a left mouse click.
-pub fn click() {
+// `fn click` a mouse click with the set `Button`.
+pub fn click(button Button) {
 	$if macos {
 		mouse_x, mouse_y := get_pos()
 		point := C.CGPoint{mouse_x, mouse_y}
-		mut mouse_down_evt := C.CGEventCreateMouseEvent(0, int(EventType.left_mouse_down), point, int(Button.left))
-		mut mouse_up_evt := C.CGEventCreateMouseEvent(0, int(EventType.left_mouse_up), point, int(Button.left))
+		mut mouse_down_evt := C.CGEventCreateMouseEvent(0, int(EventType.left_mouse_down),
+			point, int(button))
+		mut mouse_up_evt := C.CGEventCreateMouseEvent(0, int(EventType.left_mouse_up),
+			point, int(button))
 		C.CGEventPost(0, mouse_down_evt)
 		C.CGEventPost(0, mouse_up_evt)
 		C.CFRelease(mouse_down_evt)
@@ -199,9 +128,58 @@ pub fn click() {
 	}
 }
 
-// double_click simulates a mouse left clicking twice in a row.
+// `fn double_click` simulates a mouse left clicking twice in rapid succession.
 @[inline]
-pub fn double_click() {
-	click()
-	click()
+pub fn double_click(button Button) {
+	click(.left)
+	click(.left)
+}
+
+@[params]
+pub struct DragParams {
+__global:
+	duration time.Duration = time.millisecond * 1000
+	button   Button        = .left
+}
+
+// drag_to moves the the mouse cursor while holding down a mouse button.
+pub fn drag_to(target_x int, target_y int, params DragParams) {
+	target_point := C.CGPoint{target_x, target_y}
+	start_x, start_y := get_pos()
+	start_point := C.CGPoint{start_x, start_y}
+	button := match params.button {
+		.left { C.kCGMouseButtonLeft }
+		.right { C.kCGMouseButtonRight }
+		.middle { C.kCGMouseButtonCenter }
+	}
+	mouse_down_event := C.CGEventCreateMouseEvent(unsafe { nil }, C.kCGEventLeftMouseDown,
+		start_point, button)
+	C.CGEventPost(C.kCGHIDEventTap, mouse_down_event)
+	C.CFRelease(mouse_down_event)
+	mut refresh_rate := get_refresh_rate()
+	mut duration := params.duration
+	if params.duration == 0 {
+		refresh_rate = 60
+		duration = 1
+	}
+	duration_in_seconds := f64(duration) / 1000000000.0
+	steps := refresh_rate * duration_in_seconds
+	delta_x := (target_x - start_x) / steps
+	delta_y := (target_y - start_y) / steps
+	sleep_for := duration / steps
+	for i := 0; i < steps; i++ {
+		current_point := C.CGPoint{
+			x: start_x + delta_x * i
+			y: start_y + delta_y * i
+		}
+		mouse_drag_event := C.CGEventCreateMouseEvent(unsafe { nil }, C.kCGEventLeftMouseDragged,
+			current_point, button)
+		C.CGEventPost(C.kCGHIDEventTap, mouse_drag_event)
+		C.CFRelease(mouse_drag_event)
+		time.sleep(sleep_for)
+	}
+	mouse_up_event := C.CGEventCreateMouseEvent(unsafe { nil }, C.kCGEventLeftMouseUp,
+		target_point, button)
+	C.CGEventPost(C.kCGHIDEventTap, mouse_up_event)
+	C.CFRelease(mouse_up_event)
 }

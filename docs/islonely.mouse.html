@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="x-ua-compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>islonely.mouse | vdoc</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<link
+			href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+		<link rel="manifest" href="site.webmanifest" />
+		<link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5" />
+		<meta name="msapplication-TileColor" content="#da532c" />
+		<meta name="theme-color" content="#ffffff" />
+		<link rel="stylesheet" href="doc.css" />
+		<link rel="stylesheet" href="normalize.css" />
+		<script src="dark-mode.js"></script>
+	</head>
+
+	<body>
+		<div><a id="skip-to-content-link" href="#main-content">Skip to content</a></div>
+		<div id="page">
+			<header class="doc-nav hidden">
+				<div class="heading-container">
+					<div class="heading">
+						<div class="info">
+							<div class="module">islonely.mouse</div>
+							<div class="toggle-version-container">
+								<span> 42222e6</span>
+								<div
+									id="dark-mode-toggle"
+									role="switch"
+									aria-checked="false"
+									aria-label="Toggle dark mode"
+								>
+									<svg xmlns="http://www.w3.org/2000/svg" class="light-icon" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" class="dark-icon" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><rect fill="none" height="24" width="24"/></g><g><g><g><path d="M11.1,12.08C8.77,7.57,10.6,3.6,11.63,2.01C6.27,2.2,1.98,6.59,1.98,12c0,0.14,0.02,0.28,0.02,0.42 C2.62,12.15,3.29,12,4,12c1.66,0,3.18,0.83,4.1,2.15C9.77,14.63,11,16.17,11,18c0,1.52-0.87,2.83-2.12,3.51 c0.98,0.32,2.03,0.5,3.11,0.5c3.5,0,6.58-1.8,8.37-4.52C18,17.72,13.38,16.52,11.1,12.08z"/></g><path d="M7,16l-0.18,0C6.4,14.84,5.3,14,4,14c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.62,0,2.49,0,3,0c1.1,0,2-0.9,2-2 C9,16.9,8.1,16,7,16z"/></g></g></svg>
+
+								</div>
+							</div>
+							<svg xmlns="http://www.w3.org/2000/svg" id="toggle-menu" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+
+						</div>
+						<div id="search">
+							<input type="text" placeholder="Search... (beta)" autocomplete="off" />
+						</div>
+					</div>
+				</div>
+				<nav class="search hidden"></nav>
+				<nav class="content hidden">
+					<ul>
+						<li class="open active">
+<div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">islonely</a></div>
+<ul>
+<li class="active"><a href="./islonely.mouse.html">mouse</a></li>
+</ul>
+</li>
+
+					</ul>
+				</nav>
+			</header>
+			<div class="doc-scrollview" tabindex="-1" id="main-content">
+				<div class="doc-container">
+					<div class="doc-content">
+								<section id="readme_islonely.mouse" class="doc-node">
+			<div class="title"><h1> islonely.mouse <a href="#readme_islonely.mouse">#</a></h1></div>
+<h2>Cross-Platform mouse and keyboard manipulation.</h2><p>Cross-platform tool to manipulate the mouse and keyboard to automate tasks.</p><pre><code class="language-v"><span class="token keyword">import</span> islonely<span class="token punctuation">.</span>mouse
+
+<span class="token keyword">import</span> time
+
+<span class="token keyword">fn</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// get current mouse position</span>
+    x<span class="token punctuation">,</span> y <span class="token operator">:=</span> mouse<span class="token punctuation">.</span><span class="token function">get_pos</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token function">println</span><span class="token punctuation">(</span><span class="token string">'Mouse is at: X: </span><span class="token string_interp">$</span>{x}<span class="token string">, Y: </span><span class="token string_interp">$</span>{y}<span class="token string">'</span><span class="token punctuation">)</span>
+
+    <span class="token comment">// get the dimensions of the primary display</span>
+    sz <span class="token operator">:=</span> mouse<span class="token punctuation">.</span><span class="token function">screen_size</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token comment">// center the mouse in the middle of the screen</span>
+    mouse<span class="token punctuation">.</span><span class="token function">set_pos</span><span class="token punctuation">(</span>sz<span class="token punctuation">.</span>width <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">,</span> sz<span class="token punctuation">.</span>height <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">)</span>
+
+    <span class="token comment">// left and right click the mouse</span>
+    mouse<span class="token punctuation">.</span><span class="token function">click</span><span class="token punctuation">(</span><span class="token punctuation">.</span>left<span class="token punctuation">)</span>
+    mouse<span class="token punctuation">.</span><span class="token function">click</span><span class="token punctuation">(</span><span class="token punctuation">.</span>right<span class="token punctuation">)</span>
+
+    <span class="token comment">// double left click</span>
+    mouse<span class="token punctuation">.</span><span class="token function">double_click</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token comment">// click and drag mouse to 100, 150</span>
+    mouse<span class="token punctuation">.</span><span class="token function">drag_to</span><span class="token punctuation">(</span><span class="token number">100</span><span class="token punctuation">,</span> <span class="token number">150</span><span class="token punctuation">,</span> button<span class="token punctuation">:</span> <span class="token punctuation">.</span>left<span class="token punctuation">,</span> duration<span class="token punctuation">:</span> time<span class="token punctuation">.</span>second<span class="token punctuation">)</span>
+<span class="token punctuation">}</span></code></pre>
+
+</section>
+
+		<section id="click" class="doc-node">
+			<div class="title"><h2>fn click <a href="#click">#</a></h2></div>
+<pre class="signature">
+<code><span class="token keyword">fn</span> <span class="token function">click</span><span class="token punctuation">(</span>button Button<span class="token punctuation">)</span></code></pre>
+<p><code>fn click</code> a mouse click with the set <code>Button</code>.</p>
+
+</section>
+
+		<section id="double_click" class="doc-node">
+			<div class="title"><h2>fn double_click <a href="#double_click">#</a></h2></div>
+<pre class="signature">
+<code><span class="token keyword">fn</span> <span class="token function">double_click</span><span class="token punctuation">(</span>button Button<span class="token punctuation">)</span></code></pre>
+<p><code>fn double_click</code> simulates a mouse left clicking twice in rapid succession.</p>
+
+</section>
+
+		<section id="drag_to" class="doc-node">
+			<div class="title"><h2>fn drag_to <a href="#drag_to">#</a></h2></div>
+<pre class="signature">
+<code><span class="token keyword">fn</span> <span class="token function">drag_to</span><span class="token punctuation">(</span>target_x <span class="token builtin">int</span><span class="token punctuation">,</span> target_y <span class="token builtin">int</span><span class="token punctuation">,</span> params DragParams<span class="token punctuation">)</span></code></pre>
+<p>drag_to moves the the mouse cursor while holding down a mouse button.</p>
+
+</section>
+
+		<section id="get_compositor" class="doc-node">
+			<div class="title"><h2>fn get_compositor <a href="#get_compositor">#</a></h2></div>
+<pre class="signature">
+<code><span class="token keyword">fn</span> <span class="token function">get_compositor</span><span class="token punctuation">(</span><span class="token punctuation">)</span> Compositor</code></pre>
+<p>get_compositor gets whether or not a user has X11 or Wayland as their window compositor.</p>
+
+</section>
+
+		<section id="get_pos" class="doc-node">
+			<div class="title"><h2>fn get_pos <a href="#get_pos">#</a></h2></div>
+<pre class="signature">
+<code><span class="token keyword">fn</span> <span class="token function">get_pos</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token builtin">int</span><span class="token punctuation">,</span> <span class="token builtin">int</span><span class="token punctuation">)</span></code></pre>
+<p>get_pos returns the global X and Y coordinates of the mouse cursor. Returns -1, -1 if there is an error getting the mosue position.</p>
+
+</section>
+
+		<section id="get_pos_opt" class="doc-node">
+			<div class="title"><h2>fn get_pos_opt <a href="#get_pos_opt">#</a></h2></div>
+<pre class="signature">
+<code><span class="token keyword">fn</span> <span class="token function">get_pos_opt</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">?</span><span class="token punctuation">(</span><span class="token builtin">int</span><span class="token punctuation">,</span> <span class="token builtin">int</span><span class="token punctuation">)</span></code></pre>
+<p>get_pos_opt returns the global X and Y coordinates of the mouse cursor.</p>
+
+</section>
+
+		<section id="get_refresh_rate" class="doc-node">
+			<div class="title"><h2>fn get_refresh_rate <a href="#get_refresh_rate">#</a></h2></div>
+<pre class="signature">
+<code><span class="token keyword">fn</span> <span class="token function">get_refresh_rate</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">int</span></code></pre>
+<p>get_refresh_rate returns the screen refresh rate of the primary display. Returns 0 upon failure to get refresh rate.</p>
+
+</section>
+
+		<section id="screen_size" class="doc-node">
+			<div class="title"><h2>fn screen_size <a href="#screen_size">#</a></h2></div>
+<pre class="signature">
+<code><span class="token keyword">fn</span> <span class="token function">screen_size</span><span class="token punctuation">(</span><span class="token punctuation">)</span> Size</code></pre>
+<p>screen_size returns the size of the primary display.</p>
+
+</section>
+
+		<section id="set_pos" class="doc-node">
+			<div class="title"><h2>fn set_pos <a href="#set_pos">#</a></h2></div>
+<pre class="signature">
+<code><span class="token keyword">fn</span> <span class="token function">set_pos</span><span class="token punctuation">(</span>x <span class="token builtin">int</span><span class="token punctuation">,</span> y <span class="token builtin">int</span><span class="token punctuation">)</span></code></pre>
+<p><code>fn set_pos</code> immediately moves the mouse cursor to the <code>x</code>, <code>y</code>.</p>
+
+</section>
+
+		<section id="Position" class="doc-node">
+			<div class="title"><h2>type Position <a href="#Position">#</a></h2></div>
+<pre class="signature">
+<code><span class="token keyword">type</span> Position <span class="token operator">=</span> C<span class="token punctuation">.</span>Position</code></pre>
+
+
+</section>
+
+		<section id="Size" class="doc-node">
+			<div class="title"><h2>type Size <a href="#Size">#</a></h2></div>
+<pre class="signature">
+<code><span class="token keyword">type</span> Size <span class="token operator">=</span> C<span class="token punctuation">.</span>Size</code></pre>
+
+
+</section>
+
+		<section id="Button" class="doc-node">
+			<div class="title"><h2>enum Button <a href="#Button">#</a></h2></div>
+<pre class="signature">
+<code><span class="token keyword">enum</span> <span class="token symbol">Button</span> <span class="token punctuation">{</span>
+	left
+	right
+	middle
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+
+		<section id="Compositor" class="doc-node">
+			<div class="title"><h2>enum Compositor <a href="#Compositor">#</a></h2></div>
+<pre class="signature">
+<code><span class="token keyword">enum</span> <span class="token symbol">Compositor</span> <span class="token punctuation">{</span>
+	unknown
+	wayland
+	x11
+	quartz
+	windows
+<span class="token punctuation">}</span></code></pre>
+<p>Compositor is the window compositor being used by the system.</p>
+
+</section>
+
+		<section id="DragParams" class="doc-node">
+			<div class="title"><h2>struct DragParams <a href="#DragParams">#</a></h2></div>
+<div class="attributes"><div class="attribute">@[params]</div></div>
+<pre class="signature">
+<code><span class="token keyword">struct</span> <span class="token symbol">DragParams</span> <span class="token punctuation">{</span>
+<span class="token keyword">__global</span><span class="token punctuation">:</span>
+	duration time<span class="token punctuation">.</span>Duration <span class="token operator">=</span> time<span class="token punctuation">.</span>millisecond <span class="token operator">*</span> <span class="token number">1000</span>
+	button   Button        <span class="token operator">=</span> <span class="token punctuation">.</span>left
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+
+		<section id="Rectangle" class="doc-node">
+			<div class="title"><h2>struct Rectangle <a href="#Rectangle">#</a></h2></div>
+<pre class="signature">
+<code><span class="token keyword">struct</span> <span class="token symbol">Rectangle</span> <span class="token punctuation">{</span>
+	Size
+	Position
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+
+
+						<div class="footer">Powered by vdoc. Generated on: 1 Jan 2025 17:08:11</div>
+					</div>
+					<div class="doc-toc"><ul><li class="open"><a href="#readme_islonely.mouse">README</a></li>
+<li class="open"><a href="#click">fn click</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#double_click">fn double_click</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#drag_to">fn drag_to</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#get_compositor">fn get_compositor</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#get_pos">fn get_pos</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#get_pos_opt">fn get_pos_opt</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#get_refresh_rate">fn get_refresh_rate</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#screen_size">fn screen_size</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#set_pos">fn set_pos</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Position">type Position</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Size">type Size</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Button">enum Button</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Compositor">enum Compositor</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#DragParams">struct DragParams</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Rectangle">struct Rectangle</a>        <ul>
+</ul>
+</li>
+</ul></div>
+				</div>
+			</div>
+		</div>
+		<script src="doc.js"></script>
+		<script async src="search_index.js"></script>
+	</body>
+</html>
