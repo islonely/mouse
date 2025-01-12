@@ -67,3 +67,4 @@ fn C.CFRelease(voidptr)
 fn C.CGEventPost(int, voidptr)
 fn C.CGDisplayCopyDisplayMode(u32) voidptr
 fn C.CGDisplayModeGetRefreshRate(voidptr) f64
+fn C.CGEventCreateKeyboardEvent(voidptr, int, bool) voidptr
