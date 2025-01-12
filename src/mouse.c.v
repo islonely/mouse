@@ -135,11 +135,23 @@ pub fn double_click(button Button) {
 	click(.left)
 }
 
+// DragParams are the options for determining how the mouse is dragged
+// across the screen.
 @[params]
 pub struct DragParams {
 __global:
-	duration time.Duration = time.millisecond * 1000
+	duration time.Duration = time.millisecond * 750
 	button   Button        = .left
+}
+
+// drag_rel drags the mouse cursor relative to the current location of
+// the mouse.
+@[inline]
+pub fn drag_rel(rel_x int, rel_y int, params DragParams) {
+	cur_x, cur_y := get_pos()
+	target_x := cur_x + rel_x
+	target_y := cur_y + rel_y
+	drag_to(target_x, target_y, params)
 }
 
 // drag_to moves the the mouse cursor while holding down a mouse button.
