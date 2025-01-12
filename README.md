@@ -25,5 +25,9 @@ fn main() {
 
     // click and drag mouse to 100, 150
     mouse.drag_to(100, 150, button: .left, duration: time.second)
+
+    // emulate keyboard typing
+    mouse.Keyboard.press(.s)
+    mouse.Keyboard.write('some message to write', speed: 100 * time.millisecond)
 }
 ```
