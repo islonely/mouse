@@ -1,21 +1,14 @@
 module mouse
 
-import os { user_os }
 import time
 
 #flag -I @VMODROOT/src/c
 #include "mouse.h"
 #flag linux -lX11
 #flag linux @VMODROOT/src/c/mouse_linux.o
-#flag windows @VMODROOT/src/c/mouse_windows.o
 
 $if linux {
 	#include "mouse_linux.h"
-} $else $if windows {
-	#include "mouse_windows.h"
-} $else $if macos {
-	#flag -framework ApplicationServices
-	#include <ApplicationServices/ApplicationServices.h>
 }
 
 // Button is the buttons on a mouse or touchpad.
@@ -48,32 +41,6 @@ enum EventType {
 	other_mouse_dragged
 }
 
-// See .c files for comments.
-struct C.Position {
-__global:
-	x int
-	y int
-}
-
-pub type Position = C.Position
-
-struct C.Size {
-__global:
-	width  int
-	height int
-}
-
-pub type Size = C.Size
-
-pub struct Rectangle {
-	Size
-	Position
-}
-
-fn C.get_mouse_pos() C.Position
-fn C.set_mouse_pos(int, int)
-fn C.screen_size() C.Size
-
 // get_pos returns the global X and Y coordinates of the mouse cursor.
 // Returns -1, -1 if there is an error getting the mosue position.
 pub fn get_pos() (int, int) {
@@ -82,6 +49,12 @@ pub fn get_pos() (int, int) {
 		point := C.CGEventGetLocation(event)
 		C.CFRelease(event)
 		return int(point.x), int(point.y)
+	} $else $if windows {
+		mut point := &C.POINT{}
+		if C.GetCursorPos(point) {
+			return point.x, point.y
+		}
+		return -1, -1
 	} $else {
 		pos := C.get_mouse_pos()
 		return pos.x, pos.y
@@ -103,6 +76,11 @@ pub fn set_pos(x int, y int) {
 	$if macos {
 		C.CGWarpMouseCursorPosition(C.CGPoint{x, y})
 		return
+	} $else $if windows {
+		target_x := x * 65535 / C.GetSystemMetrics(C.SM_CXSCREEN)
+		target_y := y * 65535 / C.GetSystemMetrics(C.SM_CYSCREEN)
+		C.mouse_event(C.MOUSEEVENTF_ABSOLUTE | C.MOUSEEVENTF_MOVE, target_x, target_y,
+			0, 0)
 	} $else {
 		C.set_mouse_pos(x, y)
 	}
@@ -122,9 +100,14 @@ pub fn click(button Button) {
 		C.CFRelease(mouse_down_evt)
 		C.CFRelease(mouse_up_evt)
 		return
-	}
-	$if debug {
-		println('fn ${@MOD}.${@FN} is not supported on ${user_os()}.')
+	} $else $if windows {
+		button_down, button_up := match button {
+			.left { C.MOUSEEVENTF_LEFTDOWN, C.MOUSEEVENTF_LEFTUP }
+			.right { C.MOUSEEVENTF_RIGHTDOWN, C.MOUSEEVENTF_RIGHTUP }
+			.middle { C.MOUSEEVENTF_MIDDLEDOWN, C.MOUSEEVENTF_MIDDLEUP }
+		}
+		C.mouse_event(button_down, 0, 0, 0, 0)
+		C.mouse_event(button_up, 0, 0, 0, 0)
 	}
 }
 
@@ -156,42 +139,59 @@ pub fn drag_rel(rel_x int, rel_y int, params DragParams) {
 
 // drag_to moves the the mouse cursor while holding down a mouse button.
 pub fn drag_to(target_x int, target_y int, params DragParams) {
-	target_point := C.CGPoint{target_x, target_y}
 	start_x, start_y := get_pos()
-	start_point := C.CGPoint{start_x, start_y}
-	button := match params.button {
-		.left { C.kCGMouseButtonLeft }
-		.right { C.kCGMouseButtonRight }
-		.middle { C.kCGMouseButtonCenter }
-	}
-	mouse_down_event := C.CGEventCreateMouseEvent(unsafe { nil }, C.kCGEventLeftMouseDown,
-		start_point, button)
-	C.CGEventPost(C.kCGHIDEventTap, mouse_down_event)
-	C.CFRelease(mouse_down_event)
 	mut refresh_rate := get_refresh_rate()
 	mut duration := params.duration
 	if params.duration == 0 {
 		refresh_rate = 60
-		duration = 1
+		duration = 1_000_000_000
 	}
 	duration_in_seconds := f64(duration) / 1000000000.0
 	steps := refresh_rate * duration_in_seconds
 	delta_x := (target_x - start_x) / steps
 	delta_y := (target_y - start_y) / steps
 	sleep_for := duration / steps
-	for i := 0; i < steps; i++ {
-		current_point := C.CGPoint{
-			x: start_x + delta_x * i
-			y: start_y + delta_y * i
+
+	$if macos {
+		target_point := C.CGPoint{target_x, target_y}
+		start_point := C.CGPoint{start_x, start_y}
+		button := match params.button {
+			.left { C.kCGMouseButtonLeft }
+			.right { C.kCGMouseButtonRight }
+			.middle { C.kCGMouseButtonCenter }
 		}
-		mouse_drag_event := C.CGEventCreateMouseEvent(unsafe { nil }, C.kCGEventLeftMouseDragged,
-			current_point, button)
-		C.CGEventPost(C.kCGHIDEventTap, mouse_drag_event)
-		C.CFRelease(mouse_drag_event)
-		time.sleep(sleep_for)
+		mouse_down_event := C.CGEventCreateMouseEvent(unsafe { nil }, C.kCGEventLeftMouseDown,
+			start_point, button)
+		C.CGEventPost(C.kCGHIDEventTap, mouse_down_event)
+		C.CFRelease(mouse_down_event)
+		for i := 0; i < steps; i++ {
+			current_point := C.CGPoint{
+				x: start_x + delta_x * i
+				y: start_y + delta_y * i
+			}
+			mouse_drag_event := C.CGEventCreateMouseEvent(unsafe { nil }, C.kCGEventLeftMouseDragged,
+				current_point, button)
+			C.CGEventPost(C.kCGHIDEventTap, mouse_drag_event)
+			C.CFRelease(mouse_drag_event)
+			time.sleep(sleep_for)
+		}
+		mouse_up_event := C.CGEventCreateMouseEvent(unsafe { nil }, C.kCGEventLeftMouseUp,
+			target_point, button)
+		C.CGEventPost(C.kCGHIDEventTap, mouse_up_event)
+		C.CFRelease(mouse_up_event)
+	} $else $if windows {
+		button_down, button_up := match params.button {
+			.left { C.MOUSEEVENTF_LEFTDOWN, C.MOUSEEVENTF_LEFTUP }
+			.right { C.MOUSEEVENTF_RIGHTDOWN, C.MOUSEEVENTF_RIGHTUP }
+			.middle { C.MOUSEEVENTF_MIDDLEDOWN, C.MOUSEEVENTF_MIDDLEUP }
+		}
+		C.mouse_event(button_down, 0, 0, 0, 0)
+		for i := 0; i < steps; i++ {
+			current_x := start_x + delta_x * i
+			current_y := start_y + delta_y * i
+			set_pos(int(current_x), int(current_y))
+			time.sleep(sleep_for)
+		}
+		C.mouse_event(button_up, 0, 0, 0, 0)
 	}
-	mouse_up_event := C.CGEventCreateMouseEvent(unsafe { nil }, C.kCGEventLeftMouseUp,
-		target_point, button)
-	C.CGEventPost(C.kCGHIDEventTap, mouse_up_event)
-	C.CFRelease(mouse_up_event)
 }

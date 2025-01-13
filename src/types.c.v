@@ -3,6 +3,26 @@ module mouse
 $if linux {
 	#flag -lXrandr
 	#include <X11/extensions/Xrandr.h>
+} $else $if windows {
+	#flag -mwindows
+	#include <windows.h>
+} $else $if macos {
+	#flag -framework ApplicationServices
+	#include <ApplicationServices/ApplicationServices.h>
+} $else {
+	$compile_error('unsupported OS')
+}
+
+pub struct Size {
+__global:
+	width  int
+	height int
+}
+
+pub struct Pos {
+__global:
+	x int
+	y int
 }
 
 // Linux X11
@@ -68,3 +88,21 @@ fn C.CGEventPost(int, voidptr)
 fn C.CGDisplayCopyDisplayMode(u32) voidptr
 fn C.CGDisplayModeGetRefreshRate(voidptr) f64
 fn C.CGEventCreateKeyboardEvent(voidptr, int, bool) voidptr
+
+// Windows
+@[typedef]
+struct C.POINT {
+	x int
+	y int
+}
+
+@[typedef]
+struct C.DEVMODE {
+	dmDisplayFrequency u32
+	dmSize             u16
+}
+
+fn C.GetCursorPos(&C.POINT) bool
+fn C.GetSystemMetrics(int) int
+fn C.mouse_event(u32, u32, u32, u32, u64)
+fn C.EnumDisplaySettings(&u16, u32, &C.DEVMODE) bool

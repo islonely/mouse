@@ -72,8 +72,11 @@ pub fn screen_size() Size {
 				}
 			}
 		}
-	} $else {
-		return C.screen_size()
+	} $else $if windows {
+		return Size{
+			width:  C.GetSystemMetrics(C.SM_CXSCREEN)
+			height: C.GetSystemMetrics(C.SM_CYSCREEN)
+		}
 	}
 	return Size{}
 }
@@ -88,7 +91,11 @@ pub fn get_refresh_rate() int {
 			return 0
 		}
 		return int(C.CGDisplayModeGetRefreshRate(display_mode))
-	} $else {
-		return 0
+	} $else $if windows {
+		devmode := C.DEVMODE{}
+		if C.EnumDisplaySettings(unsafe { nil }, C.ENUM_CURRENT_SETTINGS, &devmode) {
+			return int(devmode.dmDisplayFrequency)
+		}
 	}
+	return 60
 }

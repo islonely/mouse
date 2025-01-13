@@ -215,6 +215,5 @@ fn keyboard_event(key_code KeyCode, is_key_down_event bool) {
 		C.CGEventPost(C.kCGHIDEventTap, event)
 		C.CFRelease(event)
 	} $else {
-		$compile_error('unsupported OS')
 	}
 }
