@@ -106,3 +106,4 @@ fn C.GetCursorPos(&C.POINT) bool
 fn C.GetSystemMetrics(int) int
 fn C.mouse_event(u32, u32, u32, u32, u64)
 fn C.EnumDisplaySettings(&u16, u32, &C.DEVMODE) bool
+fn C.keybd_event(u8, u8, u32, u64)

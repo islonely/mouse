@@ -2,179 +2,242 @@ module mouse
 
 import time
 
-// KeyCode is a key on the keyboard for Apple's ApplicationServices.h.
+// vfmt off
+const keycode_a             = $if macos { 0 }   $else { 0x41 }
+const keycode_b             = $if macos { 11 }  $else { 0x42 }
+const keycode_c             = $if macos { 8 }   $else { 0x43 }
+const keycode_d             = $if macos { 2 }   $else { 0x44 }
+const keycode_e             = $if macos { 14 }  $else { 0x45 }
+const keycode_f             = $if macos { 3 }   $else { 0x46 }
+const keycode_g             = $if macos { 5 }   $else { 0x47 }
+const keycode_h             = $if macos { 4 }   $else { 0x48 }
+const keycode_i             = $if macos { 34 }  $else { 0x49 }
+const keycode_j             = $if macos { 38 }  $else { 0x4A }
+const keycode_k             = $if macos { 40 }  $else { 0x4B }
+const keycode_l             = $if macos { 37 }  $else { 0x4C }
+const keycode_m             = $if macos { 46 }  $else { 0x4D }
+const keycode_n             = $if macos { 45 }  $else { 0x4E }
+const keycode_o             = $if macos { 31 }  $else { 0x4F }
+const keycode_p             = $if macos { 35 }  $else { 0x50 }
+const keycode_q             = $if macos { 12 }  $else { 0x51 }
+const keycode_r             = $if macos { 15 }  $else { 0x52 }
+const keycode_s             = $if macos { 1 }   $else { 0x53 }
+const keycode_t             = $if macos { 17 }  $else { 0x54 }
+const keycode_u             = $if macos { 32 }  $else { 0x55 }
+const keycode_v             = $if macos { 9 }   $else { 0x56 }
+const keycode_w             = $if macos { 13 }  $else { 0x57 }
+const keycode_x             = $if macos { 7 }   $else { 0x58 }
+const keycode_y             = $if macos { 16 }  $else { 0x59 }
+const keycode_z             = $if macos { 6 }   $else { 0x5A }
+const keycode_0             = $if macos { 29 }  $else { 0x30 }
+const keycode_1             = $if macos { 18 }  $else { 0x31 }
+const keycode_2             = $if macos { 19 }  $else { 0x32 }
+const keycode_3             = $if macos { 20 }  $else { 0x33 }
+const keycode_4             = $if macos { 21 }  $else { 0x34 }
+const keycode_5             = $if macos { 23 }  $else { 0x35 }
+const keycode_6             = $if macos { 22 }  $else { 0x36 }
+const keycode_7             = $if macos { 26 }  $else { 0x37 }
+const keycode_8             = $if macos { 28 }  $else { 0x38 }
+const keycode_9             = $if macos { 25 }  $else { 0x39 }
+const keycode_space         = $if macos { 49 }  $else { 0x20 }
+const keycode_semicolon     = $if macos { 41 }  $else $if windows { 0xBA } $else { 0x003B }
+const keycode_comma         = $if macos { 43 }  $else $if windows { 0xBC } $else { 0x002C }
+const keycode_period        = $if macos { 47 }  $else $if windows { 0xBE } $else { 0x002E }
+const keycode_slash         = $if macos { 44 }  $else $if windows { 0xBF } $else { 0x002F }
+const keycode_backtick      = $if macos { 50 }  $else $if windows { 0xC0 } $else { 0x0060 }
+const keycode_left_bracket  = $if macos { 33 }  $else $if windows { 0xDB } $else { 0x005B }
+const keycode_right_bracket = $if macos { 30 }  $else $if windows { 0xDD } $else { 0x005D }
+const keycode_backslash     = $if macos { 42 }  $else $if windows { 0xDC } $else { 0x005C }
+const keycode_quote         = $if macos { 39 }  $else $if windows { 0xDE } $else { 0x0027 }
+const keycode_hyphen        = $if macos { 27 }  $else $if windows { 0xBD } $else { 0x002D }
+const keycode_equals        = $if macos { 24 }  $else $if windows { 0xBB } $else { 0x003D }
+const keycode_return        = $if macos { 36 }  $else $if windows { 0x0D } $else { 0xFF0D }
+const keycode_backspace     = $if macos { 51 }  $else $if windows { 0x08 } $else { 0xFF08 }
+const keycode_tab           = $if macos { 48 }  $else $if windows { 0x09 } $else { 0xFF09 }
+const keycode_left_shift    = $if macos { 56 }  $else $if windows { 0x10 } $else { 0xFFE1 }
+const keycode_right_shift   = $if macos { 60 }  $else $if windows { 0xA1 } $else { 0xFFE2 }
+const keycode_left_ctrl     = $if macos { 59 }  $else $if windows { 0x11 } $else { 0xFFE3 }
+const keycode_right_ctrl    = $if macos { 62 }  $else $if windows { 0xA3 } $else { 0xFFE4 }
+const keycode_left_alt      = $if macos { 58 }  $else $if windows { 0x12 } $else { 0xFFE9 }
+const keycode_right_alt     = $if macos { 61 }  $else $if windows { 0xA5 } $else { 0xFFEA }
+const keycode_escape        = $if macos { 53 }  $else $if windows { 0x1B } $else { 0xFF1B }
+const keycode_f1            = $if macos { 122 } $else $if windows { 0x70 } $else { 0xFFBE }
+const keycode_f2            = $if macos { 120 } $else $if windows { 0x71 } $else { 0xFFBF }
+const keycode_f3            = $if macos { 99 }  $else $if windows { 0x72 } $else { 0xFFC0 }
+const keycode_f4            = $if macos { 118 } $else $if windows { 0x73 } $else { 0xFFC1 }
+const keycode_f5            = $if macos { 96 }  $else $if windows { 0x74 } $else { 0xFFC2 }
+const keycode_f6            = $if macos { 97 }  $else $if windows { 0x75 } $else { 0xFFC3 }
+const keycode_f7            = $if macos { 98 }  $else $if windows { 0x76 } $else { 0xFFC4 }
+const keycode_f8            = $if macos { 100 } $else $if windows { 0x77 } $else { 0xFFC5 }
+const keycode_f9            = $if macos { 101 } $else $if windows { 0x78 } $else { 0xFFC6 }
+const keycode_f10           = $if macos { 109 } $else $if windows { 0x79 } $else { 0xFFC7 }
+const keycode_f11           = $if macos { 103 } $else $if windows { 0x7A } $else { 0xFFC8 }
+const keycode_f12           = $if macos { 111 } $else $if windows { 0x7B } $else { 0xFFC9 }
+const keycode_left_arrow    = $if macos { 123 } $else $if windows { 0x25 } $else { 0xFF51 }
+const keycode_right_arrow   = $if macos { 124 } $else $if windows { 0x27 } $else { 0xFF53 }
+const keycode_up_arrow      = $if macos { 126 } $else $if windows { 0x26 } $else { 0xFF52 }
+const keycode_down_arrow    = $if macos { 125 } $else $if windows { 0x28 } $else { 0xFF54 }
+const keycode_delete        = $if macos { 51 }  $else $if windows { 0x2E } $else { 0xFFFF }
+// vfmt on
+
+@[flag]
+pub enum KeyModifier {
+	shift
+	ctrl
+	alt
+}
+
 @[_allow_multiple_values]
 pub enum KeyCode {
-	// MacOS
-	// Alphabet keys
-	a             = 0
-	s             = 1
-	d             = 2
-	f             = 3
-	h             = 4
-	g             = 5
-	z             = 6
-	x             = 7
-	c             = 8
-	v             = 9
-	b             = 11
-	q             = 12
-	w             = 13
-	e             = 14
-	r             = 15
-	y             = 16
-	t             = 17
-	key_1         = 18
-	key_2         = 19
-	key_3         = 20
-	key_4         = 21
-	key_6         = 22
-	key_5         = 23
-	equal         = 24
-	key_9         = 25
-	key_7         = 26
-	minus         = 27
-	key_8         = 28
-	key_0         = 29
-	right_bracket = 30
-	o             = 31
-	u             = 32
-	left_bracket  = 33
-	i             = 34
-	p             = 35
-	l             = 37
-	j             = 38
-	quote         = 39
-	k             = 40
-	semicolon     = 41
-	backslash     = 42
-	comma         = 43
-	slash         = 44
-	n             = 45
-	m             = 46
-	period        = 47
-	grave         = 50
-
-	// Modifier keys
-	left_shift  = 56
-	right_shift = 60
-	left_ctrl   = 59
-	right_ctrl  = 62
-	left_alt    = 58
-	right_alt   = 61
-	left_cmd    = 55
-	right_cmd   = 54
-
-	// Function keys
-	f1  = 122
-	f2  = 120
-	f3  = 99
-	f4  = 118
-	f5  = 96
-	f6  = 97
-	f7  = 98
-	f8  = 100
-	f9  = 101
-	f10 = 109
-	f11 = 103
-	f12 = 111
-	f13 = 105
-	f14 = 107
-	f15 = 113
-	f16 = 106
-	f17 = 64
-	f18 = 79
-	f19 = 80
-	f20 = 90
-
-	// Control keys
-	return_key = 36
-	tab        = 48
-	space      = 49
-	delete     = 51
-	escape     = 53
-	command    = 55
-	shift      = 56
-	caps_lock  = 57
-	option     = 58
-	control    = 59
-
-	// Arrow keys
-	up_arrow    = 126
-	down_arrow  = 125
-	left_arrow  = 123
-	right_arrow = 124
-
-	// Numpad keys
-	numpad_0        = 82
-	numpad_1        = 83
-	numpad_2        = 84
-	numpad_3        = 85
-	numpad_4        = 86
-	numpad_5        = 87
-	numpad_6        = 88
-	numpad_7        = 89
-	numpad_8        = 91
-	numpad_9        = 92
-	numpad_dot      = 65
-	numpad_divide   = 75
-	numpad_multiply = 67
-	numpad_minus    = 78
-	numpad_plus     = 69
-	numpad_enter    = 76
+	a             = keycode_a
+	b             = keycode_b
+	c             = keycode_c
+	d             = keycode_d
+	e             = keycode_e
+	f             = keycode_f
+	g             = keycode_g
+	h             = keycode_h
+	i             = keycode_i
+	j             = keycode_j
+	k             = keycode_k
+	l             = keycode_l
+	m             = keycode_m
+	n             = keycode_n
+	o             = keycode_o
+	p             = keycode_p
+	q             = keycode_q
+	r             = keycode_r
+	s             = keycode_s
+	t             = keycode_t
+	u             = keycode_u
+	v             = keycode_v
+	w             = keycode_w
+	x             = keycode_x
+	y             = keycode_y
+	z             = keycode_z
+	_0            = keycode_0
+	_1            = keycode_1
+	_2            = keycode_2
+	_3            = keycode_3
+	_4            = keycode_4
+	_5            = keycode_5
+	_6            = keycode_6
+	_7            = keycode_7
+	_8            = keycode_8
+	_9            = keycode_9
+	space         = keycode_space
+	semicolon     = keycode_semicolon
+	comma         = keycode_comma
+	period        = keycode_period
+	slash         = keycode_slash
+	backtick      = keycode_backtick
+	left_bracket  = keycode_left_bracket
+	right_bracket = keycode_right_bracket
+	backslash     = keycode_backslash
+	quote         = keycode_quote
+	hyphen        = keycode_hyphen
+	equals        = keycode_equals
+	return        = keycode_return
+	enter         = keycode_return
+	backspace     = keycode_backspace
+	tab           = keycode_tab
+	left_shift    = keycode_left_shift
+	right_shift   = keycode_right_shift
+	left_ctrl     = keycode_left_ctrl
+	right_ctrl    = keycode_right_ctrl
+	left_alt      = keycode_left_alt
+	right_alt     = keycode_right_alt
+	escape        = keycode_escape
+	f1            = keycode_f1
+	f2            = keycode_f2
+	f3            = keycode_f3
+	f4            = keycode_f4
+	f5            = keycode_f5
+	f6            = keycode_f6
+	f7            = keycode_f7
+	f8            = keycode_f8
+	f9            = keycode_f9
+	f10           = keycode_f10
+	f11           = keycode_f11
+	f12           = keycode_f12
+	left_arrow    = keycode_left_arrow
+	right_arrow   = keycode_right_arrow
+	up_arrow      = keycode_up_arrow
+	down_arrow    = keycode_down_arrow
+	delete        = keycode_delete
 }
 
 @[inline]
-pub fn KeyCode.from_byte(c u8) ?KeyCode {
+pub fn KeyCode.from_byte(c u8) ?(KeyCode, KeyModifier) {
 	return match c {
-		`a` { KeyCode.a }
-		`s` { KeyCode.s }
-		`d` { KeyCode.d }
-		`f` { KeyCode.f }
-		`h` { KeyCode.h }
-		`g` { KeyCode.g }
-		`z` { KeyCode.z }
-		`x` { KeyCode.x }
-		`c` { KeyCode.c }
-		`v` { KeyCode.v }
-		`b` { KeyCode.b }
-		`q` { KeyCode.q }
-		`w` { KeyCode.w }
-		`e` { KeyCode.e }
-		`r` { KeyCode.r }
-		`y` { KeyCode.y }
-		`t` { KeyCode.t }
-		`1` { KeyCode.key_1 }
-		`2` { KeyCode.key_2 }
-		`3` { KeyCode.key_3 }
-		`4` { KeyCode.key_4 }
-		`6` { KeyCode.key_6 }
-		`5` { KeyCode.key_5 }
-		`=` { KeyCode.equal }
-		`9` { KeyCode.key_9 }
-		`7` { KeyCode.key_7 }
-		`-` { KeyCode.minus }
-		`8` { KeyCode.key_8 }
-		`0` { KeyCode.key_0 }
-		`]` { KeyCode.right_bracket }
-		`o` { KeyCode.o }
-		`u` { KeyCode.u }
-		`[` { KeyCode.left_bracket }
-		`i` { KeyCode.i }
-		`p` { KeyCode.p }
-		`l` { KeyCode.l }
-		`j` { KeyCode.j }
-		`'` { KeyCode.quote }
-		`k` { KeyCode.k }
-		`;` { KeyCode.semicolon }
-		`\\` { KeyCode.backslash }
-		`,` { KeyCode.comma }
-		`/` { KeyCode.slash }
-		`n` { KeyCode.n }
-		`m` { KeyCode.m }
-		`.` { KeyCode.period }
-		`\`` { KeyCode.grave }
-		` ` { .space }
+		`a` { KeyCode.a, KeyModifier.zero() }
+		`b` { KeyCode.b, KeyModifier.zero() }
+		`c` { KeyCode.c, KeyModifier.zero() }
+		`d` { KeyCode.d, KeyModifier.zero() }
+		`e` { KeyCode.e, KeyModifier.zero() }
+		`f` { KeyCode.f, KeyModifier.zero() }
+		`g` { KeyCode.g, KeyModifier.zero() }
+		`h` { KeyCode.h, KeyModifier.zero() }
+		`i` { KeyCode.i, KeyModifier.zero() }
+		`j` { KeyCode.j, KeyModifier.zero() }
+		`k` { KeyCode.k, KeyModifier.zero() }
+		`l` { KeyCode.l, KeyModifier.zero() }
+		`m` { KeyCode.m, KeyModifier.zero() }
+		`n` { KeyCode.n, KeyModifier.zero() }
+		`o` { KeyCode.o, KeyModifier.zero() }
+		`p` { KeyCode.p, KeyModifier.zero() }
+		`q` { KeyCode.q, KeyModifier.zero() }
+		`r` { KeyCode.r, KeyModifier.zero() }
+		`s` { KeyCode.s, KeyModifier.zero() }
+		`t` { KeyCode.t, KeyModifier.zero() }
+		`u` { KeyCode.u, KeyModifier.zero() }
+		`v` { KeyCode.v, KeyModifier.zero() }
+		`w` { KeyCode.w, KeyModifier.zero() }
+		`x` { KeyCode.x, KeyModifier.zero() }
+		`y` { KeyCode.y, KeyModifier.zero() }
+		`z` { KeyCode.z, KeyModifier.zero() }
+		`0` { KeyCode._0, KeyModifier.zero() }
+		`1` { KeyCode._1, KeyModifier.zero() }
+		`2` { KeyCode._2, KeyModifier.zero() }
+		`3` { KeyCode._3, KeyModifier.zero() }
+		`4` { KeyCode._4, KeyModifier.zero() }
+		`5` { KeyCode._5, KeyModifier.zero() }
+		`6` { KeyCode._6, KeyModifier.zero() }
+		`7` { KeyCode._7, KeyModifier.zero() }
+		`8` { KeyCode._8, KeyModifier.zero() }
+		`9` { KeyCode._9, KeyModifier.zero() }
+		` ` { KeyCode.space, KeyModifier.zero() }
+		`;` { KeyCode.semicolon, KeyModifier.zero() }
+		`,` { KeyCode.comma, KeyModifier.zero() }
+		`.` { KeyCode.period, KeyModifier.zero() }
+		`/` { KeyCode.slash, KeyModifier.zero() }
+		`\\` { KeyCode.backslash, KeyModifier.zero() }
+		`'` { KeyCode.quote, KeyModifier.zero() }
+		`-` { KeyCode.hyphen, KeyModifier.zero() }
+		`=` { KeyCode.equals, KeyModifier.zero() }
+		`\n` { KeyCode.return, KeyModifier.zero() }
+		`\t` { KeyCode.tab, KeyModifier.zero() }
+		`~` { KeyCode.backtick, KeyModifier.shift }
+		`!` { KeyCode._1, KeyModifier.shift }
+		`@` { KeyCode._2, KeyModifier.shift }
+		`#` { KeyCode._3, KeyModifier.shift }
+		`$` { KeyCode._4, KeyModifier.shift }
+		`%` { KeyCode._5, KeyModifier.shift }
+		`^` { KeyCode._6, KeyModifier.shift }
+		`&` { KeyCode._7, KeyModifier.shift }
+		`*` { KeyCode._8, KeyModifier.shift }
+		`(` { KeyCode._9, KeyModifier.shift }
+		`)` { KeyCode._0, KeyModifier.shift }
+		`_` { KeyCode.hyphen, KeyModifier.shift }
+		`+` { KeyCode.equals, KeyModifier.shift }
+		`{` { KeyCode.left_bracket, KeyModifier.shift }
+		`}` { KeyCode.right_bracket, KeyModifier.shift }
+		`|` { KeyCode.backslash, KeyModifier.shift }
+		`:` { KeyCode.semicolon, KeyModifier.shift }
+		`"` { KeyCode.quote, KeyModifier.shift }
+		`<` { KeyCode.comma, KeyModifier.shift }
+		`>` { KeyCode.period, KeyModifier.shift }
+		`?` { KeyCode.slash, KeyModifier.shift }
 		else { return none }
 	}
 }
@@ -190,26 +253,26 @@ pub struct Keyboard {}
 
 // Keyboard.press emulates a key press.
 @[inline]
-pub fn Keyboard.press(key_code KeyCode) {
-	keyboard_event(key_code, true)
+pub fn Keyboard.press(key_code KeyCode, mod KeyModifier) {
+	keyboard_event(key_code, mod, true)
 	time.sleep(50 * time.millisecond)
-	keyboard_event(key_code, false)
+	keyboard_event(key_code, mod, false)
 }
 
 // Keyboard.write types out a string.
 @[inline]
 pub fn Keyboard.write(str string, params KeyboardWriteParams) {
 	for c in str {
-		if code := KeyCode.from_byte(c) {
-			keyboard_event(code, true)
+		if code, mod := KeyCode.from_byte(c) {
+			keyboard_event(code, mod, true)
 			time.sleep(params.speed)
-			keyboard_event(code, false)
+			keyboard_event(code, mod, false)
 		}
 	}
 }
 
 // keyboard_event creates an event
-fn keyboard_event(key_code KeyCode, is_key_down_event bool) {
+fn keyboard_event(key_code KeyCode, mod KeyModifier, is_key_down_event bool) {
 	$if macos {
 		event := C.CGEventCreateKeyboardEvent(unsafe { nil }, int(key_code), is_key_down_event)
 		C.CGEventPost(C.kCGHIDEventTap, event)
