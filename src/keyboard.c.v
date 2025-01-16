@@ -171,31 +171,57 @@ pub enum KeyCode {
 pub fn KeyCode.from_byte(c u8) ?(KeyCode, KeyModifier) {
 	return match c {
 		`a` { KeyCode.a, KeyModifier.zero() }
+		`A` { KeyCode.a, KeyModifier.shift }
 		`b` { KeyCode.b, KeyModifier.zero() }
+		`B` { KeyCode.b, KeyModifier.shift }
 		`c` { KeyCode.c, KeyModifier.zero() }
+		`C` { KeyCode.c, KeyModifier.shift }
 		`d` { KeyCode.d, KeyModifier.zero() }
+		`D` { KeyCode.d, KeyModifier.shift }
 		`e` { KeyCode.e, KeyModifier.zero() }
+		`E` { KeyCode.e, KeyModifier.shift }
 		`f` { KeyCode.f, KeyModifier.zero() }
+		`F` { KeyCode.f, KeyModifier.shift }
 		`g` { KeyCode.g, KeyModifier.zero() }
+		`G` { KeyCode.g, KeyModifier.shift }
 		`h` { KeyCode.h, KeyModifier.zero() }
+		`H` { KeyCode.h, KeyModifier.shift }
 		`i` { KeyCode.i, KeyModifier.zero() }
+		`I` { KeyCode.i, KeyModifier.shift }
 		`j` { KeyCode.j, KeyModifier.zero() }
+		`J` { KeyCode.j, KeyModifier.shift }
 		`k` { KeyCode.k, KeyModifier.zero() }
+		`K` { KeyCode.k, KeyModifier.shift }
 		`l` { KeyCode.l, KeyModifier.zero() }
+		`L` { KeyCode.l, KeyModifier.shift }
 		`m` { KeyCode.m, KeyModifier.zero() }
+		`M` { KeyCode.m, KeyModifier.shift }
 		`n` { KeyCode.n, KeyModifier.zero() }
+		`N` { KeyCode.n, KeyModifier.shift }
 		`o` { KeyCode.o, KeyModifier.zero() }
+		`O` { KeyCode.o, KeyModifier.shift }
 		`p` { KeyCode.p, KeyModifier.zero() }
+		`P` { KeyCode.p, KeyModifier.shift }
 		`q` { KeyCode.q, KeyModifier.zero() }
+		`Q` { KeyCode.q, KeyModifier.shift }
 		`r` { KeyCode.r, KeyModifier.zero() }
+		`R` { KeyCode.r, KeyModifier.shift }
 		`s` { KeyCode.s, KeyModifier.zero() }
+		`S` { KeyCode.s, KeyModifier.shift }
 		`t` { KeyCode.t, KeyModifier.zero() }
+		`T` { KeyCode.t, KeyModifier.shift }
 		`u` { KeyCode.u, KeyModifier.zero() }
+		`U` { KeyCode.u, KeyModifier.shift }
 		`v` { KeyCode.v, KeyModifier.zero() }
+		`V` { KeyCode.v, KeyModifier.shift }
 		`w` { KeyCode.w, KeyModifier.zero() }
+		`W` { KeyCode.w, KeyModifier.shift }
 		`x` { KeyCode.x, KeyModifier.zero() }
+		`X` { KeyCode.x, KeyModifier.shift }
 		`y` { KeyCode.y, KeyModifier.zero() }
+		`Y` { KeyCode.y, KeyModifier.shift }
 		`z` { KeyCode.z, KeyModifier.zero() }
+		`Z` { KeyCode.z, KeyModifier.shift }
 		`0` { KeyCode._0, KeyModifier.zero() }
 		`1` { KeyCode._1, KeyModifier.zero() }
 		`2` { KeyCode._2, KeyModifier.zero() }
@@ -277,6 +303,22 @@ fn keyboard_event(key_code KeyCode, mod KeyModifier, is_key_down_event bool) {
 		event := C.CGEventCreateKeyboardEvent(unsafe { nil }, int(key_code), is_key_down_event)
 		C.CGEventPost(C.kCGHIDEventTap, event)
 		C.CFRelease(event)
+	} $else $if windows {
+		mut keys := []int{cap: 3}
+		if mod.has(.shift) {
+			keys << C.VK_SHIFT
+		}
+		if mod.has(.ctrl) {
+			keys << C.VK_CONTROL
+		}
+		if mod.has(.alt) {
+			keys << C.VK_MENU
+		}
+		keys << int(key_code)
+		for key in keys {
+			C.keybd_event(key, 0, if is_key_down_event { 0 } else { C.KEYEVENTF_KEYUP },
+				0)
+		}
 	} $else {
 	}
 }
