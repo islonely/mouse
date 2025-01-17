@@ -13,12 +13,14 @@ $if linux {
 	$compile_error('unsupported OS')
 }
 
+// Size is the width and height of a screen.
 pub struct Size {
 __global:
 	width  int
 	height int
 }
 
+// Pos is the X and Y coordinates on a screen.
 pub struct Pos {
 __global:
 	x int

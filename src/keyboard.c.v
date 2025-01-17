@@ -80,6 +80,7 @@ const keycode_down_arrow    = $if macos { 125 } $else $if windows { 0x28 } $else
 const keycode_delete        = $if macos { 51 }  $else $if windows { 0x2E } $else { 0xFFFF }
 // vfmt on
 
+// KeyModifier is a key which can be pressed in combination with another key.
 @[flag]
 pub enum KeyModifier {
 	shift
@@ -87,6 +88,7 @@ pub enum KeyModifier {
 	alt
 }
 
+// KeyCode is a key on a keyboard.
 @[_allow_multiple_values]
 pub enum KeyCode {
 	a             = keycode_a
@@ -167,6 +169,7 @@ pub enum KeyCode {
 	delete        = keycode_delete
 }
 
+// KeyCode.from_byte returns the KeyCode and KeyModifier for an ascii character.
 @[inline]
 pub fn KeyCode.from_byte(c u8) ?(KeyCode, KeyModifier) {
 	return match c {
@@ -268,16 +271,18 @@ pub fn KeyCode.from_byte(c u8) ?(KeyCode, KeyModifier) {
 	}
 }
 
+// KeyboardWriteParams is the parameters for determining how Keyboard.write behaves.
 @[params]
 pub struct KeyboardWriteParams {
 __global:
 	speed time.Duration = 50 * time.millisecond
 }
 
+// Keyboard acts as a namespace for keyboard related functions.
 @[noinit]
 pub struct Keyboard {}
 
-// Keyboard.press emulates a key press.
+// Keyboard.press triggers a key press.
 @[inline]
 pub fn Keyboard.press(key_code KeyCode, mod KeyModifier) {
 	keyboard_event(key_code, mod, true)
@@ -297,7 +302,7 @@ pub fn Keyboard.write(str string, params KeyboardWriteParams) {
 	}
 }
 
-// keyboard_event creates an event
+// keyboard_event creates an event from the given key_code and mod.
 fn keyboard_event(key_code KeyCode, mod KeyModifier, is_key_down_event bool) {
 	$if macos {
 		event := C.CGEventCreateKeyboardEvent(unsafe { nil }, int(key_code), is_key_down_event)

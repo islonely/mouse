@@ -2,7 +2,7 @@ module auto
 
 import os
 
-// the compositor used by the user.
+// The compositor used by the user.
 const compositor = Screen.compositor()
 
 // Compositor is the window compositor being used by the system.
@@ -14,6 +14,7 @@ pub enum Compositor {
 	windows
 }
 
+// Screen acts as a namespace for screen related functions.
 @[noinit]
 pub struct Screen {}
 
@@ -85,13 +86,12 @@ pub fn Screen.size() Size {
 }
 
 // Screen.refresh_rate returns the screen refresh rate of the primary display.
-// Returns 0 upon failure to get refresh rate.
-pub fn Screen.refresh_rate() int {
+pub fn Screen.refresh_rate() ?int {
 	$if macos {
 		primary_display := C.CGMainDisplayID()
 		display_mode := C.CGDisplayCopyDisplayMode(primary_display)
 		if display_mode == unsafe { nil } {
-			return 0
+			return none
 		}
 		return int(C.CGDisplayModeGetRefreshRate(display_mode))
 	} $else $if windows {
@@ -100,5 +100,5 @@ pub fn Screen.refresh_rate() int {
 			return int(devmode.dmDisplayFrequency)
 		}
 	}
-	return 60
+	return none
 }

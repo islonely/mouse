@@ -41,6 +41,7 @@ enum EventType {
 	other_mouse_dragged
 }
 
+// Mouse acts as a namespace for mouse related functions.
 @[noinit]
 pub struct Mouse {}
 
@@ -143,7 +144,7 @@ pub fn Mouse.drag_rel(rel_x int, rel_y int, params DragParams) {
 // Mouse.drag_to moves the the mouse cursor while holding down a mouse button.
 pub fn Mouse.drag_to(target_x int, target_y int, params DragParams) {
 	start_x, start_y := Mouse.get_pos()
-	mut refresh_rate := Screen.refresh_rate()
+	mut refresh_rate := Screen.refresh_rate() or { 60 }
 	mut duration := params.duration
 	if params.duration == 0 {
 		refresh_rate = 60
