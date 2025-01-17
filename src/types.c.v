@@ -47,6 +47,8 @@ struct C.XRROutputInfo {
 struct C.XRRCrtcInfo {
 	width  u32
 	height u32
+	x      int
+	y      int
 }
 
 fn C.XOpenDisplay(int) voidptr

@@ -52,14 +52,20 @@ pub fn Mouse.get_pos() (int, int) {
 		return -1, -1
 	} $else {
 		if compositor == .x11 {
-			display := C.XOpenDisplay(0)
-			defer { _ := C.XCloseDisplay(display) }
-			window := C.XRootWindow(display, 0)
+			display := C.XOpenDisplay(unsafe { nil })
+			if display == unsafe { nil } {
+				return -1, -1
+			}
+			defer { C.XCloseDisplay(display) }
+			root := C.DefaultRootWindow(display)
+			crtc_info := Screen.primary_info() or { return -1, -1 }
 			root_id, child_id := u32(0), u32(0)
 			win_x, win_y, mask := u32(0), u32(0), u32(0)
 			mut pos_x, mut pos_y := 0, 0
-			C.XQueryPointer(display, window, &root_id, &child_id, &pos_x, &pos_y, &win_x, &win_y, &mask)
-			return pos_x, pos_y
+			C.XQueryPointer(display, root, &root_id, &child_id, &pos_x, &pos_y, &win_x,
+				&win_y, &mask)
+
+			return pos_x - int(crtc_info.x), pos_y - int(crtc_info.y)
 		}
 		println(compositor)
 	}
@@ -88,11 +94,14 @@ pub fn Mouse.set_pos(x int, y int) {
 			0, 0)
 	} $else {
 		if compositor == .x11 {
-			display := C.XOpenDisplay(0)
-			defer { _ := C.XCloseDisplay(display) }
-			window := C.XRootWindow(display, 0)
-			C.XSelectInput(display, window, C.KeyReleaseMask)
-			C.XWarpPointer(display, C.None, window, 0, 0, 0, 0, x, y)
+			display := C.XOpenDisplay(unsafe { nil })
+			if display == unsafe { nil } {
+				return
+			}
+			root := C.DefaultRootWindow(display)
+			crtc_info := Screen.primary_info() or { return }
+			C.XWarpPointer(display, C.None, root, 0, 0, 0, 0, int(crtc_info.x) + x,
+				int(crtc_info.y) + y)
 			C.XFlush(display)
 		}
 	}
