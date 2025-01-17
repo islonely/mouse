@@ -1,4 +1,4 @@
-module mouse
+module auto
 
 import time
 

@@ -1,4 +1,4 @@
-module mouse
+module auto
 
 $if linux {
 	#flag -lXrandr

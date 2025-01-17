@@ -1,9 +1,9 @@
-module mouse
+module auto
 
 import os
 
 // the compositor used by the user.
-const compositor = get_compositor()
+const compositor = Screen.compositor()
 
 // Compositor is the window compositor being used by the system.
 pub enum Compositor {
@@ -14,9 +14,12 @@ pub enum Compositor {
 	windows
 }
 
-// get_compositor gets whether or not a user has X11 or Wayland as
+@[noinit]
+pub struct Screen {}
+
+// Screen.get_compositor gets whether or not a user has X11 or Wayland as
 // their window compositor.
-pub fn get_compositor() Compositor {
+pub fn Screen.compositor() Compositor {
 	$if macos {
 		return .quartz
 	}
@@ -30,8 +33,8 @@ pub fn get_compositor() Compositor {
 	return .wayland
 }
 
-// screen_size returns the size of the primary display.
-pub fn screen_size() Size {
+// Screen.size returns the size of the primary display.
+pub fn Screen.size() Size {
 	$if macos {
 		primary_screen := C.CGDisplayBounds(C.CGMainDisplayID())
 		return Size{
@@ -81,9 +84,9 @@ pub fn screen_size() Size {
 	return Size{}
 }
 
-// get_refresh_rate returns the screen refresh rate of the primary display.
+// Screen.refresh_rate returns the screen refresh rate of the primary display.
 // Returns 0 upon failure to get refresh rate.
-pub fn get_refresh_rate() int {
+pub fn Screen.refresh_rate() int {
 	$if macos {
 		primary_display := C.CGMainDisplayID()
 		display_mode := C.CGDisplayCopyDisplayMode(primary_display)

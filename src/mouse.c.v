@@ -1,4 +1,4 @@
-module mouse
+module auto
 
 import time
 
@@ -41,9 +41,12 @@ enum EventType {
 	other_mouse_dragged
 }
 
-// get_pos returns the global X and Y coordinates of the mouse cursor.
+@[noinit]
+pub struct Mouse {}
+
+// Mouse.get_pos returns the global X and Y coordinates of the mouse cursor.
 // Returns -1, -1 if there is an error getting the mosue position.
-pub fn get_pos() (int, int) {
+pub fn Mouse.get_pos() (int, int) {
 	$if macos {
 		event := C.CGEventCreate(unsafe { nil })
 		point := C.CGEventGetLocation(event)
@@ -61,18 +64,18 @@ pub fn get_pos() (int, int) {
 	}
 }
 
-// get_pos_opt returns the global X and Y coordinates of the mouse cursor.
+// Mouse.get_pos_opt returns the global X and Y coordinates of the mouse cursor.
 @[inline]
-pub fn get_pos_opt() ?(int, int) {
-	x, y := get_pos()
+pub fn Mouse.get_pos_opt() ?(int, int) {
+	x, y := Mouse.get_pos()
 	if -1 in [x, y] {
 		return none
 	}
 	return x, y
 }
 
-// `fn set_pos` immediately moves the mouse cursor to the `x`, `y`.
-pub fn set_pos(x int, y int) {
+// Mouse.set_pos immediately moves the mouse cursor to the `x`, `y`.
+pub fn Mouse.set_pos(x int, y int) {
 	$if macos {
 		C.CGWarpMouseCursorPosition(C.CGPoint{x, y})
 		return
@@ -86,8 +89,8 @@ pub fn set_pos(x int, y int) {
 	}
 }
 
-// `fn click` a mouse click with the set `Button`.
-pub fn click(button Button) {
+// Mouse.click triggers a mouse click event at the current mouse cursor position.
+pub fn Mouse.click(button Button) {
 	$if macos {
 		mouse_x, mouse_y := get_pos()
 		point := C.CGPoint{mouse_x, mouse_y}
@@ -111,11 +114,11 @@ pub fn click(button Button) {
 	}
 }
 
-// `fn double_click` simulates a mouse left clicking twice in rapid succession.
+// Mouse.double_click triggers a double click event at the current mouse cursor position.
 @[inline]
-pub fn double_click(button Button) {
-	click(.left)
-	click(.left)
+pub fn Mouse.double_click(button Button) {
+	Mouse.click(button)
+	Mouse.click(button)
 }
 
 // DragParams are the options for determining how the mouse is dragged
@@ -127,20 +130,20 @@ __global:
 	button   Button        = .left
 }
 
-// drag_rel drags the mouse cursor relative to the current location of
+// Mouse.drag_rel drags the mouse cursor relative to the current location of
 // the mouse.
 @[inline]
-pub fn drag_rel(rel_x int, rel_y int, params DragParams) {
-	cur_x, cur_y := get_pos()
+pub fn Mouse.drag_rel(rel_x int, rel_y int, params DragParams) {
+	cur_x, cur_y := Mouse.get_pos()
 	target_x := cur_x + rel_x
 	target_y := cur_y + rel_y
-	drag_to(target_x, target_y, params)
+	Mouse.drag_to(target_x, target_y, params)
 }
 
-// drag_to moves the the mouse cursor while holding down a mouse button.
-pub fn drag_to(target_x int, target_y int, params DragParams) {
-	start_x, start_y := get_pos()
-	mut refresh_rate := get_refresh_rate()
+// Mouse.drag_to moves the the mouse cursor while holding down a mouse button.
+pub fn Mouse.drag_to(target_x int, target_y int, params DragParams) {
+	start_x, start_y := Mouse.get_pos()
+	mut refresh_rate := Screen.refresh_rate()
 	mut duration := params.duration
 	if params.duration == 0 {
 		refresh_rate = 60
@@ -189,7 +192,7 @@ pub fn drag_to(target_x int, target_y int, params DragParams) {
 		for i := 0; i < steps; i++ {
 			current_x := start_x + delta_x * i
 			current_y := start_y + delta_y * i
-			set_pos(int(current_x), int(current_y))
+			Mouse.set_pos(int(current_x), int(current_y))
 			time.sleep(sleep_for)
 		}
 		C.mouse_event(button_up, 0, 0, 0, 0)
