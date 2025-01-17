@@ -2,15 +2,6 @@ module auto
 
 import time
 
-#flag -I @VMODROOT/src/c
-#include "mouse.h"
-#flag linux -lX11
-#flag linux @VMODROOT/src/c/mouse_linux.o
-
-$if linux {
-	#include "mouse_linux.h"
-}
-
 // Button is the buttons on a mouse or touchpad.
 pub enum Button {
 	left
@@ -60,9 +51,19 @@ pub fn Mouse.get_pos() (int, int) {
 		}
 		return -1, -1
 	} $else {
-		pos := C.get_mouse_pos()
-		return pos.x, pos.y
+		if compositor == .x11 {
+			display := C.XOpenDisplay(0)
+			defer { _ := C.XCloseDisplay(display) }
+			window := C.XRootWindow(display, 0)
+			root_id, child_id := u32(0), u32(0)
+			win_x, win_y, mask := u32(0), u32(0), u32(0)
+			mut pos_x, mut pos_y := 0, 0
+			C.XQueryPointer(display, window, &root_id, &child_id, &pos_x, &pos_y, &win_x, &win_y, &mask)
+			return pos_x, pos_y
+		}
+		println(compositor)
 	}
+	return -1, -1
 }
 
 // Mouse.get_pos_opt returns the global X and Y coordinates of the mouse cursor.
@@ -86,7 +87,14 @@ pub fn Mouse.set_pos(x int, y int) {
 		C.mouse_event(C.MOUSEEVENTF_ABSOLUTE | C.MOUSEEVENTF_MOVE, target_x, target_y,
 			0, 0)
 	} $else {
-		C.set_mouse_pos(x, y)
+		if compositor == .x11 {
+			display := C.XOpenDisplay(0)
+			defer { _ := C.XCloseDisplay(display) }
+			window := C.XRootWindow(display, 0)
+			C.XSelectInput(display, window, C.KeyReleaseMask)
+			C.XWarpPointer(display, C.None, window, 0, 0, 0, 0, x, y)
+			C.XFlush(display)
+		}
 	}
 }
 

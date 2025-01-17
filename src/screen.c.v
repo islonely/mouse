@@ -27,11 +27,16 @@ pub fn Screen.compositor() Compositor {
 	$if windows {
 		return .windows
 	}
-	_ := os.getenv_opt('WAYLAND_DISPLAY') or {
-		_ := os.getenv_opt('DISPLAY') or { return .unknown }
+	xdg_session_type := os.getenv_opt('XDG_SESSION_TYPE') or {
+		// assume X11
 		return .x11
 	}
-	return .wayland
+	return if xdg_session_type == 'wayland' {
+		.wayland
+	} else {
+		// assume X11
+		.x11
+	}
 }
 
 // Screen.size returns the size of the primary display.

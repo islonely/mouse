@@ -1,7 +1,11 @@
 module auto
 
 $if linux {
+	#flag -lX11
 	#flag -lXrandr
+	#include <X11/X.h>
+	#include <X11/Xlib.h>
+	#include <X11/Xutil.h>
 	#include <X11/extensions/Xrandr.h>
 } $else $if windows {
 	#flag -mwindows
@@ -10,7 +14,7 @@ $if linux {
 	#flag -framework ApplicationServices
 	#include <ApplicationServices/ApplicationServices.h>
 } $else {
-	$compile_error('unsupported OS')
+	$compile_error('Unsupported OS')
 }
 
 // Size is the width and height of a screen.
@@ -47,6 +51,11 @@ struct C.XRRCrtcInfo {
 
 fn C.XOpenDisplay(int) voidptr
 fn C.XCloseDisplay(voidptr) int
+fn C.XQueryPointer(voidptr, voidptr, &u32, &u32, &int, &int, &u32, &u32, &u32)
+fn C.XRootWindow(voidptr, int) voidptr
+fn C.XSelectInput(voidptr, voidptr, int)
+fn C.XWarpPointer(voidptr, int, voidptr, int, int, int, int, int, int)
+fn C.XFlush(voidptr)
 fn C.DefaultScreen(voidptr) int
 fn C.DefaultRootWindow(voidptr) u64
 fn C.XRRGetScreenResources(voidptr, u64) &C.XRRScreenResources
